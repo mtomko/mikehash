@@ -14,6 +14,7 @@ lazy val hazelcastScalaDep = "com.hazelcast" %% "hazelcast-scala" % "3.7.2" with
 lazy val monix = "io.monix" %% "monix" % "2.2.4"
 lazy val quill = "io.getquill" %% "quill" % "1.1.0"
 lazy val quillCassandra = "io.getquill" %% "quill-cassandra" % "1.1.0"
+lazy val scalaRedis = "net.debasishg" %% "redisclient" % "3.4"
 lazy val scalaArmDep = "com.jsuereth" %% "scala-arm" % "2.0"
 
 // Projects
@@ -54,5 +55,14 @@ lazy val hazelcastNode =
       resolvers += Resolver.jcenterRepo,
       libraryDependencies ++= Seq(hazelcastDep, hazelcastScalaDep, scalaArmDep)
     )
+
+lazy val redisc =
+  project
+    .in(file("redisc"))
+    .dependsOn(share)
+    .settings(
+      libraryDependencies ++= Seq(boopickle, scalaRedis, scalaArmDep)
+    )
+
 
 lazy val share = project.in(file("share"))
