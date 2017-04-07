@@ -2,7 +2,11 @@
  * Copyright 2017 Genetic Perturbation Platform, The Broad Institute of Harvard and MIT.
  * http://www.broadinstitute.org
  */
+import java.nio.ByteBuffer
+
+import boopickle.Default._
 import com.aerospike.client.Bin
+import gpp.mikehash.share.IntegerBox
 import io.tabmo.aerospike.client.ReactiveAerospikeClient
 import io.tabmo.aerospike.converter.key._
 import io.tabmo.aerospike.data.AerospikeKey
@@ -11,7 +15,7 @@ import monix.eval.Task
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-object ErrOSpike {
+object ErrOAsync {
 
   def main(args: Array[String]): Unit = {
     val asyncClient = ReactiveAerospikeClient.connect("127.0.0.1", 3000)
@@ -25,7 +29,7 @@ object ErrOSpike {
     val key = AerospikeKey(namespace, setname, targetSeq)
 
     // put a simplified threat matrix
-    val tm0 = new Bin("Tier 1 Bin 1", 0)
+    val tm0 = new Bin("Tier 1 Bin 1", Pickle.intoBytes(IntegerBox(0)).array())
     val tm1 = new Bin("Tier 1 Bin 2", 0)
     val tm2 = new Bin("Tier 1 Bin 3", 1)
     val tm3 = new Bin("Tier 2 Bin 1", 7)
@@ -43,7 +47,10 @@ object ErrOSpike {
       _ <- putTask
       t <- getTask
     } yield {
-      val atm0 = t.getLong("Tier 1 Bin 1").toInt
+      val atm0 =
+        Unpickle[IntegerBox]
+          .fromBytes(ByteBuffer.wrap(t.bins("Tier 1 Bin 1").asInstanceOf[Array[Byte]]))
+          .i
       val atm1 = t.getLong("Tier 1 Bin 2").toInt
       val atm2 = t.getLong("Tier 1 Bin 3").toInt
       val atm3 = t.getLong("Tier 2 Bin 1").toInt

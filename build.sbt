@@ -6,6 +6,7 @@ scalaVersion in ThisBuild := "2.11.9"
 
 // Dependencies
 lazy val aerospike = "com.aerospike" % "aerospike-client" % "latest.integration"
+lazy val boopickle = "io.suzaku" %% "boopickle" % "1.2.6"
 lazy val rxaerospike = "io.tabmo" %% "reactive-aerospike" % "1.0.7"
 lazy val hazelcastDep = "com.hazelcast" % "hazelcast" % "3.8"
 lazy val hazelcastClientDep = "com.hazelcast" % "hazelcast-client" % "3.8"
@@ -33,7 +34,7 @@ lazy val errospike =
     .dependsOn(share)
     .settings(
       resolvers += "Tabmo Bintray" at "https://dl.bintray.com/tabmo/maven",
-      libraryDependencies ++= Seq(aerospike, monix, rxaerospike)
+      libraryDependencies ++= Seq(aerospike, boopickle, monix, rxaerospike)
     )
 
 lazy val hazelcastClient =
